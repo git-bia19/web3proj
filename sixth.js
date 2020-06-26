@@ -46,27 +46,33 @@ console.log("Buffer1:",pvtKey1Buffer);
 //console.log("Buffer2:",pvtKey2Buffer);
 
 
-web3.eth.getTransactionCount(account1, (err,txCount)=> {
+	console.log("Buffer 1 = ",pvtKey1Buffer);
 
-    const txObj = {
-       nounce: web3.utils.toHex(txCount),
-       to: ContractAddress,
-       gasLimit:web3.utils.toHex(80000),
-       gasPrice: web3.utils.toHex(web3.utils.toWei('10','gwei')),
-       data : contract.methods.welcome("nabia").encodeABI
-    }
-
-
-const tx = new Tx.Transaction(txObj,{ chain:'ropsten', hardfork: 'petersburg'});
-tx.sign(pvtKey1Buffer);
-
-const serializedTx = tx.serialize();
-const  raw = '0x' + serializedTx.toString('hex');
-
-web3.eth.sendSignedTransaction(raw,(err,TxnHash) => {
- console.log("TxnHash:",TxnHash);
-})
-})
-contract.methods.getName().call(function (err,result) {
-    console.log("Age=",result)
-});
+	web3.eth.getTransactionCount(account1, (err, txCount)=>{
+	
+		const txObject = {
+			nonce:    web3.utils.toHex(txCount),
+			gasLimit: web3.utils.toHex(800000),
+			gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
+			to: ContractAddress,
+			data: contract.methods.welcome("nabia").encodeABI()
+		  }
+	
+		const tx = new Tx.Transaction(txObject, { chain: 'ropsten' });
+		tx.sign(pvtKey1Buffer);
+	
+		const serializedTx = tx.serialize();
+		const raw = '0x' + serializedTx.toString('hex');
+	
+		//console.log("tx = ",tx);
+		//console.log("serializedTx = ",serializedTx);
+		//console.log("raw = ",raw);
+	
+		web3.eth.sendSignedTransaction(raw, (err, txHash) => {
+			console.log('txHash:', txHash)
+		});
+	});
+	
+	contract.methods.getName().call(function (err,result){
+		console.log("Name = ",result)
+	});
